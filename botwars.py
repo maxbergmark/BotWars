@@ -405,7 +405,7 @@ class Game:
 		#	self.winGame()
 		#else:
 		self.frame += 1
-		self.canvas.after(1, self.newFrame)
+		self.canvas.after(30, self.newFrame)
 
 	def winGame(self):
 		winner = [player.playerID if player.alive else '' for player in self.players]
