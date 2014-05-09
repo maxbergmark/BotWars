@@ -31,7 +31,6 @@ class Ship:
 		self.score = 0
 		self.alive = True
 		self.pos = [random.randint(0,int(self.canvas.cget('width'))), random.randint(0,int(self.canvas.cget('height')))]
-		#self.pos = [100+100*playerID, 100]
 		self.size = 2
 		self.bullets = []
 		self.scans = []
@@ -375,9 +374,9 @@ class Game:
 
 
 	def newFrame(self):
-		if self.root.winfo_width() > 200 and self.root.winfo_height() > 200:
-			self.canvas.config(width = self.root.winfo_width()-4, height = self.root.winfo_height()-4)
-			self.canvas.coords(self.frameBoard, 5, int(self.canvas.cget('height')))
+		#if self.root.winfo_width() > 200 and self.root.winfo_height() > 200:
+		#	self.canvas.config(width = self.root.winfo_width()-4, height = self.root.winfo_height()-4)
+		#	self.canvas.coords(self.frameBoard, 5, int(self.canvas.cget('height')))
 
 		scoreList = sorted(self.players, key = self.getPlayerScore, reverse = True)
 		nameList = [str(player.playerID) + ': ' + str(player.score) for player in scoreList]
@@ -423,6 +422,8 @@ class Game:
 
 
 print()
+
+graphic = False
 
 root = Tk()
 root.title('BotWars')
