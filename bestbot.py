@@ -16,13 +16,13 @@ class Bot:
 		self.lastScan = False
 		self.willFire = False
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.socket.settimeout(.1)
-		self.socket.connect(('localhost', 50007))
+		self.socket.settimeout(1)
+		self.socket.connect(('localhost', 50027))
 		self.socket.send('setName Max Bergmark'.encode())
 		self.socket.recv(1024).decode()
 		self.socket.send('setColor green'.encode())
 		self.socket.recv(1024).decode()
-		for i in range(30):
+		for i in range(10):
 			self.socket.send('addBot'.encode())
 			self.socket.recv(1024).decode()
 

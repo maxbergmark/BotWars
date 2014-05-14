@@ -318,6 +318,7 @@ class Game:
 
 
 	def processMessage(self, conn, addr, message):
+		message.word("angle").space.integer().end()
 		if message.split()[0] == 'angle':
 			try:
 				self.playerConns[self.connList[conn]].setAngle(float(message.split()[1]))
