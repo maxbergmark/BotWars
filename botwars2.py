@@ -292,7 +292,10 @@ class Game:
 		self.playerConns[playerUUID] = Ship(self, name, color, playerUUID) 
 		self.connList[conn] = playerUUID
 		self.players.append(self.playerConns[playerUUID])
+<<<<<<< HEAD
 		print(name, 'joined the game. Their color is', color + '.')
+=======
+>>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 		return {'status': True, 'result': playerUUID, 'frame': self.frame}
 
 
@@ -406,8 +409,13 @@ class Game:
 			elif 'command' in message:
 
 				if message['command'] == 'scanShips':
+<<<<<<< HEAD
 					scanned = self.playerConns[self.connList[conn]].scanShips()
 					return {'status': True, 'result': [{'x': ship[0], 'y': ship[1]} for ship in scanned], 'frame': self.frame}
+=======
+					return {'status': True, 'result': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
+
+>>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 				elif message['command'] == 'boost':
 					self.playerConns[self.connList[conn]].startBoost()
 				elif message['command'] == 'fire':

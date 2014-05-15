@@ -61,7 +61,12 @@ class Bot:
 					firstTarget = sorted(self.firstScan, key=self.getSort)[0]
 				if nearby != []:
 					self.socket.send(self.makeMessage('scanShips'))
+<<<<<<< HEAD
 					nearby = self.readMessage()
+=======
+					nearby = json.loads(self.socket.recv(4096).decode().split('\0')[0])['result']
+					#nearby = ast.literal_eval(self.socket.recv(4096).decode())
+>>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 					if nearby:
 						for ship in nearby:
 							self.lastScan.append([(ship['x']**2+ship['y']**2)**.5, toDegrees(math.atan2(ship['y'], ship['x'])), ship['x'], ship['y']])

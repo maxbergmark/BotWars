@@ -43,8 +43,12 @@ within a 150 pixel range from you, with positions relative to you.
 This costs 5 energy.
 
 Example: {'command': 'scanShips'}
+<<<<<<< HEAD
 Returns: {'status': __BOOL__, 'result': __POSITION__, 'frame': __INT}
 __POSITION__ = [{'x': __FLOAT__, 'y': __FLOAT__}, {'x': __FLOAT__, 'y': __FLOAT__}, ...]
+=======
+Returns: {'status': __BOOL__, 'result': __LIST__, 'frame': __INT}
+>>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 
 ** Boosting away
 Send an object where 'command' is 'boost'. This doubles your speed for 50 frames. 
@@ -80,7 +84,11 @@ Send an object where 'command' is 'getPosition'.
 Returns your ships position on the board. This costs 0 energy.
 
 Example: {'command': 'getPosition'}
+<<<<<<< HEAD
 Returns: {'status': __BOOL__, 'result': {'x': __FLOAT__, 'y': __FLOAT__}, 'frame': __INT__}
+=======
+Returns: {'status': __BOOL__, 'result': __LIST__, 'frame': __INT__}
+>>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 
 ** Getting your score
 Send an object where 'command' is 'getScore'.
