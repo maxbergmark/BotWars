@@ -28,7 +28,7 @@ class Bot:
 
 		for i in range(0):
 			self.socket.send(self.makeMessage('addBot'))
-			self.socket.recv(1024).decode()
+			self.socket.recv(4096).decode()
 		#'''
 		#self.socket.send(self.reconnect('762e1da4-bce1-4af2-9b4e-00b7aef788aa'))
 
@@ -44,7 +44,7 @@ class Bot:
 		return (json.dumps({'command': message, 'value': value}) + '\0').encode()
 
 	def readMessage(self):
-		return json.loads(self.socket.recv(1024).decode().split('\0')[0])['message']
+		return json.loads(self.socket.recv(4096).decode().split('\0')[0])['result']
 
 	def playSelf(self):
 		self.firstScan = []
@@ -62,8 +62,8 @@ class Bot:
 					firstTarget = sorted(self.firstScan, key=self.getSort)[0]
 				if nearby != []:
 					self.socket.send(self.makeMessage('scanShips'))
-					nearby = json.loads(self.socket.recv(1024).decode().split('\0')[0])['message']
-					#nearby = ast.literal_eval(self.socket.recv(1024).decode())
+					nearby = json.loads(self.socket.recv(4096).decode().split('\0')[0])['result']
+					#nearby = ast.literal_eval(self.socket.recv(4096).decode())
 					if nearby:
 						for ship in nearby:
 							self.lastScan.append([(ship[0]**2+ship[1]**2)**.5, toDegrees(math.atan2(ship[1], ship[0])), ship[0], ship[1]])
@@ -73,10 +73,10 @@ class Bot:
 			if self.firstScan != [] and self.lastScan != []:
 				angle = toDegrees(math.atan2(lastTarget[3]+.055*lastTarget[0]*(lastTarget[3]-firstTarget[3]), lastTarget[2]+.055*lastTarget[0]*(lastTarget[2]-firstTarget[2])))
 				self.socket.send(self.makeMessage('angle', angle))
-				self.socket.recv(1024).decode()
+				self.socket.recv(4096).decode()
 				for i in range(3):
 					self.socket.send(self.makeMessage('fire'))
-					self.socket.recv(1024).decode()
+					self.socket.recv(4096).decode()
 					self.fired += 1
 					print(self.fired)
 
@@ -84,7 +84,7 @@ class Bot:
 				self.socket.send(self.makeMessage('shield', True))
 			else:
 				self.socket.send(self.makeMessage('shield', False))
-			self.socket.recv(1024).decode()
+			self.socket.recv(4096).decode()
 
 	def getSort(self, item):
 		return item[0]
