@@ -292,7 +292,15 @@ class Game:
 		self.playerConns[playerUUID] = Ship(self, name, color, playerUUID) 
 		self.connList[conn] = playerUUID
 		self.players.append(self.playerConns[playerUUID])
+<<<<<<< HEAD
 		return {'status': True, 'result': playerUUID, 'frame': self.frame}
+=======
+<<<<<<< HEAD
+		return {'status': True, 'message': playerUUID, 'frame': self.frame}
+=======
+		return {'message': playerUUID}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 
 
@@ -371,7 +379,15 @@ class Game:
 			if message['name'] not in self.playerNames:
 				return self.addPlayer(conn, message['name'], message['color'])
 			else:
+<<<<<<< HEAD
 				return {'status': False, 'result': '', 'frame': self.frame}
+=======
+<<<<<<< HEAD
+				return {'status': False, 'message': '', 'frame': self.frame}
+=======
+				return {'message': False, 'frame': self.frame}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 
 		elif 'UUID' in message:
@@ -380,7 +396,15 @@ class Game:
 				self.connList[conn] = message['UUID']
 				self.playerConns[self.connList[conn]].active = True
 			else:
+<<<<<<< HEAD
 				return {'status': False, 'result': '', 'frame': self.frame}
+=======
+<<<<<<< HEAD
+				return {'status': False, 'message': '', 'frame': self.frame}
+=======
+				return {'message': False, 'frame': self.frame}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 		elif conn in self.connList:
 
@@ -398,7 +422,15 @@ class Game:
 			elif 'command' in message:
 
 				if message['command'] == 'scanShips':
+<<<<<<< HEAD
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
+=======
+<<<<<<< HEAD
+					return {'status': True, 'message': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
+=======
+					return {'message': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 				elif message['command'] == 'boost':
 					self.playerConns[self.connList[conn]].startBoost()
 				elif message['command'] == 'fire':
@@ -408,6 +440,7 @@ class Game:
 					self.bots.append(Ship(self, 'BOT', '#a0a0a0'))
 					self.players.append(self.bots[-1])
 				elif message['command'] == 'getEnergy':
+<<<<<<< HEAD
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
 				elif message['command'] == 'getHealth':
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
@@ -419,14 +452,51 @@ class Game:
 					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
 					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
 					return {'status': True, 'result': sortedScore, 'frame': self.frame}
+=======
+<<<<<<< HEAD
+					return {'status': True, 'message': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
+				elif message['command'] == 'getHealth':
+					return {'status': True, 'message': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
+				elif message['command'] == 'getPosition':
+					return {'status': True, 'message': self.playerConns[self.connList[conn]].pos, 'frame': self.frame}
+				elif message['command'] == 'getScore':
+					return {'status': True, 'message': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
+				elif message['command'] == 'top10':
+					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
+					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
+					return {'status': True, 'message': sortedScore, 'frame': self.frame}
+=======
+					return {'message': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
+				elif message['command'] == 'getHealth':
+					return {'message': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
+				elif message['command'] == 'getPosition':
+					return {'message': self.playerConns[self.connList[conn]].pos, 'frame': self.frame}
+				elif message['command'] == 'getScore':
+					return {'message': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
+				elif message['command'] == 'top10':
+					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
+					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
+					return {'message': sortedScore, 'frame': self.frame}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 
 
 
 
 		else:
+<<<<<<< HEAD
 			return {'status': False, 'result': '', 'frame': self.frame}
 		return {'status': True, 'result': '', 'frame': self.frame}
+=======
+<<<<<<< HEAD
+			return {'status': False, 'message': '', 'frame': self.frame}
+		return {'status': True, 'message': '', 'frame': self.frame}
+=======
+			return {'message': False, 'frame': self.frame}
+		return {'message': True, 'frame': self.frame}
+>>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
+>>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 
 	def getSort(self, value):
