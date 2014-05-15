@@ -225,7 +225,7 @@ class Bullet:
 						player.destroyShip()
 						self.ship.score += 80
 						self.ship.kills += 1
-						print(player.playerID, 'died a horrible death.', self.ship.playerID, 'is responsible.', self.ship.kills, self.ship.score)
+						#print(player.playerID, 'died a horrible death.', self.ship.playerID, 'is responsible.', self.ship.kills, self.ship.score)
 				else:
 					player.disableShield()
 				if self in self.ship.bullets:
@@ -292,22 +292,16 @@ class Game:
 		self.playerConns[playerUUID] = Ship(self, name, color, playerUUID) 
 		self.connList[conn] = playerUUID
 		self.players.append(self.playerConns[playerUUID])
-<<<<<<< HEAD
+		print(name, 'joined the game. Their color is', color + '.')
 		return {'status': True, 'result': playerUUID, 'frame': self.frame}
-=======
-<<<<<<< HEAD
-		return {'status': True, 'message': playerUUID, 'frame': self.frame}
-=======
-		return {'message': playerUUID}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
+
 
 
 
 	def newFrame(self):
 
 		self.scoreList = sorted(self.players, key = self.getPlayerScore, reverse = True)
-		self.nameList = [str(player.playerID) + ': ' + str(player.score) for player in self.scoreList]
+		self.nameList = [str(player.playerID) + ': ' + str(player.score) for player in self.scoreList if player.active]
 		self.scoreString = '\n'.join(self.nameList[:10])
 
 
@@ -320,8 +314,9 @@ class Game:
 			player.energy = min(player.energy+1, 100)
 
 		for bot in self.bots:
-			if self.frame % 50 == 0:
+			if self.frame % (50*self.width//640) == 0:
 				bot.setAngle(360*random.random())
+			if self.frame % 50 == 0:
 				bot.fireBullet()
 				
 
@@ -357,7 +352,7 @@ class Game:
 			if element == self.serverSocket:
 				(conn, addr) = self.serverSocket.accept()
 
-				print('New player joined the game.')
+				#print('A player joined the game.')
 				self.serverList.append(conn)
 
 			else:
@@ -366,11 +361,14 @@ class Game:
 					if not data and element in self.serverList:
 						self.serverList.remove(element)
 						self.playerConns[self.connList[element]].active = False
-					obj = json.loads(data.decode().split('\0')[0])
-					if obj:
-						element.send((json.dumps(self.processMessage(element, obj)) + '\0').encode())
+						self.playerNames.remove(self.playerConns[self.connList[element]].playerID)
+						print(self.playerConns[self.connList[element]].playerID, 'disconnected.')
+					else:
+						obj = json.loads(data.decode().split('\0')[0])
+						if obj:
+							element.send((json.dumps(self.processMessage(element, obj)) + '\0').encode())
 				except:
-					print('fail')
+					print('message processing error')
 
 
 	def processMessage(self, conn, message):
@@ -379,32 +377,18 @@ class Game:
 			if message['name'] not in self.playerNames:
 				return self.addPlayer(conn, message['name'], message['color'])
 			else:
-<<<<<<< HEAD
 				return {'status': False, 'result': '', 'frame': self.frame}
-=======
-<<<<<<< HEAD
-				return {'status': False, 'message': '', 'frame': self.frame}
-=======
-				return {'message': False, 'frame': self.frame}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
-
 
 		elif 'UUID' in message:
 			if message['UUID'] in self.connList.values():
 				self.connList = {key: value for key, value in self.connList.items() if value is not message['UUID']}
 				self.connList[conn] = message['UUID']
 				self.playerConns[self.connList[conn]].active = True
+				self.playerNames.append(self.playerConns[self.connList[conn]].playerID)
+				print(self.playerConns[self.connList[conn]].playerID, 'reconnected.')
 			else:
-<<<<<<< HEAD
 				return {'status': False, 'result': '', 'frame': self.frame}
-=======
-<<<<<<< HEAD
-				return {'status': False, 'message': '', 'frame': self.frame}
-=======
-				return {'message': False, 'frame': self.frame}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
+
 
 		elif conn in self.connList:
 
@@ -422,15 +406,8 @@ class Game:
 			elif 'command' in message:
 
 				if message['command'] == 'scanShips':
-<<<<<<< HEAD
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
-=======
-<<<<<<< HEAD
-					return {'status': True, 'message': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
-=======
-					return {'message': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
+					scanned = self.playerConns[self.connList[conn]].scanShips()
+					return {'status': True, 'result': [{'x': ship[0], 'y': ship[1]} for ship in scanned], 'frame': self.frame}
 				elif message['command'] == 'boost':
 					self.playerConns[self.connList[conn]].startBoost()
 				elif message['command'] == 'fire':
@@ -440,63 +417,21 @@ class Game:
 					self.bots.append(Ship(self, 'BOT', '#a0a0a0'))
 					self.players.append(self.bots[-1])
 				elif message['command'] == 'getEnergy':
-<<<<<<< HEAD
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
 				elif message['command'] == 'getHealth':
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
 				elif message['command'] == 'getPosition':
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].pos, 'frame': self.frame}
+					return {'status': True, 'result': {'x': self.playerConns[self.connList[conn]].pos[0], 'y': self.playerConns[self.connList[conn]].pos[1]}, 'frame': self.frame}
 				elif message['command'] == 'getScore':
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
 				elif message['command'] == 'top10':
-					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
+					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values() if ship.active]
 					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
 					return {'status': True, 'result': sortedScore, 'frame': self.frame}
-=======
-<<<<<<< HEAD
-					return {'status': True, 'message': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
-				elif message['command'] == 'getHealth':
-					return {'status': True, 'message': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
-				elif message['command'] == 'getPosition':
-					return {'status': True, 'message': self.playerConns[self.connList[conn]].pos, 'frame': self.frame}
-				elif message['command'] == 'getScore':
-					return {'status': True, 'message': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
-				elif message['command'] == 'top10':
-					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
-					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
-					return {'status': True, 'message': sortedScore, 'frame': self.frame}
-=======
-					return {'message': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
-				elif message['command'] == 'getHealth':
-					return {'message': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
-				elif message['command'] == 'getPosition':
-					return {'message': self.playerConns[self.connList[conn]].pos, 'frame': self.frame}
-				elif message['command'] == 'getScore':
-					return {'message': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
-				elif message['command'] == 'top10':
-					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values()]
-					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
-					return {'message': sortedScore, 'frame': self.frame}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
-
-
-
-
 
 		else:
-<<<<<<< HEAD
 			return {'status': False, 'result': '', 'frame': self.frame}
 		return {'status': True, 'result': '', 'frame': self.frame}
-=======
-<<<<<<< HEAD
-			return {'status': False, 'message': '', 'frame': self.frame}
-		return {'status': True, 'message': '', 'frame': self.frame}
-=======
-			return {'message': False, 'frame': self.frame}
-		return {'message': True, 'frame': self.frame}
->>>>>>> 604026cb34e4a126232697ac69fa199d4c51da50
->>>>>>> 70e1a7faa1f0ce7fcc102dbfa74dc85dc0ba6450
 
 
 	def getSort(self, value):
