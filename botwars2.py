@@ -148,6 +148,7 @@ class Ship:
 			self.scans.append(Scan(self.root, self, self.pos, self.playerID))
 			self.energy -= 5
 			return self.scans[-1].checkShips()
+		return []
 
 	def destroyShip(self):
 		self.alive = False
@@ -225,7 +226,7 @@ class Bullet:
 						player.destroyShip()
 						self.ship.score += 80
 						self.ship.kills += 1
-						#print(player.playerID, 'died a horrible death.', self.ship.playerID, 'is responsible.', self.ship.kills, self.ship.score)
+						print(player.playerID, 'died a horrible death.', self.ship.playerID, 'is responsible.')#, self.ship.kills, self.ship.score)
 				else:
 					player.disableShield()
 				if self in self.ship.bullets:
@@ -249,10 +250,11 @@ class Game:
 		self.width = 640*1
 		self.height = 640*1
 		self.scale = 1
-		self.framerate = 1000
+		self.framerate = 100
 		
 		self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.serverSocket.bind(('localhost', 50027))
+		#self.serverSocket.bind((socket.gethostname(), 7007))
+		self.serverSocket.bind(('', 7007))
 		self.serverSocket.listen(5)
 
 		self.serverList = [self.serverSocket]
@@ -287,17 +289,16 @@ class Game:
 
 
 	def addPlayer(self, conn, name, color):
-		playerUUID = str(uuid.uuid4())
-		self.playerNames.append(name)
-		self.playerConns[playerUUID] = Ship(self, name, color, playerUUID) 
-		self.connList[conn] = playerUUID
-		self.players.append(self.playerConns[playerUUID])
-<<<<<<< HEAD
-		print(name, 'joined the game. Their color is', color + '.')
-=======
->>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
-		return {'status': True, 'result': playerUUID, 'frame': self.frame}
-
+		try:
+			playerUUID = str(uuid.uuid4())
+			self.playerConns[playerUUID] = Ship(self, name, color, playerUUID) 
+			self.playerNames.append(name)
+			self.connList[conn] = playerUUID
+			self.players.append(self.playerConns[playerUUID])
+			print(name, 'joined the game. Their color is', color + '.')
+			return {'status': True, 'result': playerUUID, 'frame': self.frame}
+		except:
+			return {'status': False, 'result': '', 'frame': self.frame}
 
 
 
@@ -354,10 +355,7 @@ class Game:
 		for element in rtr:
 			if element == self.serverSocket:
 				(conn, addr) = self.serverSocket.accept()
-
-				#print('A player joined the game.')
 				self.serverList.append(conn)
-
 			else:
 				try:
 					data = element.recv(1024)
@@ -369,9 +367,12 @@ class Game:
 					else:
 						obj = json.loads(data.decode().split('\0')[0])
 						if obj:
-							element.send((json.dumps(self.processMessage(element, obj)) + '\0').encode())
+							datasend = (json.dumps(self.processMessage(element, obj)) + '\0').encode()
+							element.send(datasend)
 				except:
 					print('message processing error')
+					if element in self.serverList:
+						self.serverList.remove(element)
 
 
 	def processMessage(self, conn, message):
@@ -396,33 +397,27 @@ class Game:
 		elif conn in self.connList:
 
 			if 'command' in message and 'value' in message:
+
 				if message['command'] == 'angle':
 					self.playerConns[self.connList[conn]].setAngle(message['value'])
-
 				elif message['command'] == 'shield':
 					if message['value'] == True:
 						self.playerConns[self.connList[conn]].activateShield()
 					else:
 						self.playerConns[self.connList[conn]].disableShield()
 
-
 			elif 'command' in message:
 
 				if message['command'] == 'scanShips':
-<<<<<<< HEAD
 					scanned = self.playerConns[self.connList[conn]].scanShips()
 					return {'status': True, 'result': [{'x': ship[0], 'y': ship[1]} for ship in scanned], 'frame': self.frame}
-=======
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].scanShips(), 'frame': self.frame}
-
->>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 				elif message['command'] == 'boost':
 					self.playerConns[self.connList[conn]].startBoost()
 				elif message['command'] == 'fire':
 					self.playerConns[self.connList[conn]].fireBullet()
 
 				elif message['command'] == 'addBot':
-					self.bots.append(Ship(self, 'BOT', '#a0a0a0'))
+					self.bots.append(Ship(self, 'BOT', '#a0a0a0', uuid.uuid4()))
 					self.players.append(self.bots[-1])
 				elif message['command'] == 'getEnergy':
 					return {'status': True, 'result': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}

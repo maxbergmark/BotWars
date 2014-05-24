@@ -43,12 +43,8 @@ within a 150 pixel range from you, with positions relative to you.
 This costs 5 energy.
 
 Example: {'command': 'scanShips'}
-<<<<<<< HEAD
 Returns: {'status': __BOOL__, 'result': __POSITION__, 'frame': __INT}
 __POSITION__ = [{'x': __FLOAT__, 'y': __FLOAT__}, {'x': __FLOAT__, 'y': __FLOAT__}, ...]
-=======
-Returns: {'status': __BOOL__, 'result': __LIST__, 'frame': __INT}
->>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 
 ** Boosting away
 Send an object where 'command' is 'boost'. This doubles your speed for 50 frames. 
@@ -84,11 +80,7 @@ Send an object where 'command' is 'getPosition'.
 Returns your ships position on the board. This costs 0 energy.
 
 Example: {'command': 'getPosition'}
-<<<<<<< HEAD
 Returns: {'status': __BOOL__, 'result': {'x': __FLOAT__, 'y': __FLOAT__}, 'frame': __INT__}
-=======
-Returns: {'status': __BOOL__, 'result': __LIST__, 'frame': __INT__}
->>>>>>> 85d693d9f0ac0bd1815028d0f1ee25e6461673bc
 
 ** Getting your score
 Send an object where 'command' is 'getScore'.
@@ -131,6 +123,17 @@ from the center of the ship.
 Your ship has a pair of rockets that are capable of propelling you forward at 
 a speed of 4 pixels per frame. The ship also has a booster rocket, and when 
 activated, the speed doubles, and becomes 8 pixels per frame.
+
+** Ship shield
+Your ship has a powerful shield that will protect you from harm. Once it is 
+activated, it will protect you from one incoming projectile. Once you've been 
+hit the shield will be deactivated, and you have to manually reactivate it.
+
+** Ship destruction
+If your ship is destroyed, by reaching zero health, it will disappear from the 
+screen for 100 frames. After that time, the ship will respawn at a random 
+location, and you will lose 200 points, or your score will drop to 0 if your 
+score is less than 200 points.
 
 
 * Sending messages
