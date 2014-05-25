@@ -147,8 +147,8 @@ class Ship:
 		if self.energy >= 5 and self.alive:
 			self.scans.append(Scan(self.root, self, self.pos, self.playerID))
 			self.energy -= 5
-			return self.scans[-1].checkShips()
-		return []
+			return {'status': True, 'result': self.scans[-1].checkShips()}
+		return {'status': False, 'result': []}
 
 	def destroyShip(self):
 		self.alive = False
@@ -193,8 +193,8 @@ class Scan:
 class Bullet:
 
 	def __init__(self, root, ship, angle, pos, playerID):
+		
 		self.root = root
-
 		self.ship = ship
 		self.speed = 10
 		self.pos = pos
@@ -253,8 +253,8 @@ class Game:
 		self.framerate = 100
 		
 		self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		#self.serverSocket.bind((socket.gethostname(), 7007))
-		self.serverSocket.bind(('', 7007))
+		self.serverSocket.bind((socket.gethostname(), 7007))
+		#self.serverSocket.bind(('', 7007))
 		self.serverSocket.listen(5)
 
 		self.serverList = [self.serverSocket]
@@ -296,9 +296,9 @@ class Game:
 			self.connList[conn] = playerUUID
 			self.players.append(self.playerConns[playerUUID])
 			print(name, 'joined the game. Their color is', color + '.')
-			return {'status': True, 'result': playerUUID, 'frame': self.frame}
+			return {'result': playerUUID}
 		except:
-			return {'status': False, 'result': '', 'frame': self.frame}
+			return {'status': False}
 
 
 
@@ -376,12 +376,12 @@ class Game:
 
 
 	def processMessage(self, conn, message):
-		
+		returnMessage = {}
 		if 'name' in message and 'color' in message:
 			if message['name'] not in self.playerNames:
-				return self.addPlayer(conn, message['name'], message['color'])
+				returnMessage = self.addPlayer(conn, message['name'], message['color'])
 			else:
-				return {'status': False, 'result': '', 'frame': self.frame}
+				returnMessage['status'] = False
 
 		elif 'UUID' in message:
 			if message['UUID'] in self.connList.values():
@@ -391,7 +391,7 @@ class Game:
 				self.playerNames.append(self.playerConns[self.connList[conn]].playerID)
 				print(self.playerConns[self.connList[conn]].playerID, 'reconnected.')
 			else:
-				return {'status': False, 'result': '', 'frame': self.frame}
+				returnMessage['status'] = False
 
 
 		elif conn in self.connList:
@@ -410,7 +410,8 @@ class Game:
 
 				if message['command'] == 'scanShips':
 					scanned = self.playerConns[self.connList[conn]].scanShips()
-					return {'status': True, 'result': [{'x': ship[0], 'y': ship[1]} for ship in scanned], 'frame': self.frame}
+					returnMessage['status'] = scanned['status']
+					returnMessage['result'] = [{'x': ship[0], 'y': ship[1]} for ship in scanned['result']]
 				elif message['command'] == 'boost':
 					self.playerConns[self.connList[conn]].startBoost()
 				elif message['command'] == 'fire':
@@ -420,21 +421,28 @@ class Game:
 					self.bots.append(Ship(self, 'BOT', '#a0a0a0', uuid.uuid4()))
 					self.players.append(self.bots[-1])
 				elif message['command'] == 'getEnergy':
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].energy, 'frame': self.frame}
+					returnMessage['result'] = self.playerConns[self.connList[conn]].energy
 				elif message['command'] == 'getHealth':
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].health, 'frame': self.frame}
+					returnMessage['result'] = self.playerConns[self.connList[conn]].health
 				elif message['command'] == 'getPosition':
-					return {'status': True, 'result': {'x': self.playerConns[self.connList[conn]].pos[0], 'y': self.playerConns[self.connList[conn]].pos[1]}, 'frame': self.frame}
+					returnMessage['result'] = {'x': self.playerConns[self.connList[conn]].pos[0], 'y': self.playerConns[self.connList[conn]].pos[1]}
 				elif message['command'] == 'getScore':
-					return {'status': True, 'result': self.playerConns[self.connList[conn]].score, 'frame': self.frame}
+					returnMessage['result'] = self.playerConns[self.connList[conn]].score
 				elif message['command'] == 'top10':
 					unSorted = [[ship.playerID, ship.score] for ship in self.playerConns.values() if ship.active]
 					sortedScore = sorted(unSorted, key = self.getSort, reverse = True)[:min(10, len(unSorted))]
-					return {'status': True, 'result': sortedScore, 'frame': self.frame}
+					returnMessage['result'] = sortedScore
 
 		else:
-			return {'status': False, 'result': '', 'frame': self.frame}
-		return {'status': True, 'result': '', 'frame': self.frame}
+			returnMessage['status'] = False
+		returnMessage['frame'] = self.frame
+		returnMessage['position'] = self.getPlace(self.playerConns[self.connList[conn]])
+		if 'status' not in returnMessage:
+			returnMessage['status'] = True
+		return returnMessage
+
+	def getPlace(self, player):
+		return sorted(self.players, key = self.getPlayerScore, reverse = True).index(player)+1
 
 
 	def getSort(self, value):
@@ -454,7 +462,6 @@ def graphicStart(game):
 	game.root.mainloop()
 
 
-
 game = Game()
-threading.Thread(target = graphicStart, args = [game]).start()
+#threading.Thread(target = graphicStart, args = [game]).start()
 serverStart(game)
