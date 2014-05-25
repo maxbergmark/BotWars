@@ -1,4 +1,3 @@
-from tkinter import *
 import threading
 import socket
 import select
@@ -456,7 +455,7 @@ def serverStart(game):
 
 
 def graphicStart(game):
-
+	from tkinter import *
 	game.initGraphic()
 	game.updateFrame()
 	game.root.mainloop()
