@@ -7,6 +7,7 @@ You will receive a UUID after you have sent the data, or you will receive
 False if you could not connect properly.
 
 Example: `{'name': __STRING__, 'color', __COLOR__}`
+
 Returns: `{'status': __BOOL__, 'result': __STRING__, 'frame', __INT__}`
 
 ## Reconnection
@@ -15,6 +16,7 @@ the one you were provided with when you first connected.
 Returns True if successful, and False if unsuccessful.
 
 Example: `{'UUID': __STRING__}`
+
 Returns: `{'status': __BOOL__, 'result': __BOOL__, 'frame': __INT__}`
 
 
@@ -27,6 +29,7 @@ successful, otherwise False.
 This costs 10 energy.
 
 Example: `{'command': 'angle', 'value', __FLOAT__}`
+
 Returns: `{'status': __BOOL__, 'result': __BOOL__, 'frame': __INT__}`
 
 ## Shielding yourself
@@ -35,6 +38,7 @@ The shield will protect you from one bullet, and costs 2 energy per frame.
 Returns True if successful, otherwise False.
 
 Example: `{'command': 'shield', 'value', __BOOL__}`
+
 Returns: `{'status': __BOOL__, 'result': __BOOL__, 'frame': __INT__}`
 
 ## Scanning for ships
@@ -43,6 +47,7 @@ within a 150 pixel range from you, with positions relative to you.
 This costs 5 energy.
 
 Example: `{'command': 'scanShips'}`
+
 Returns: `{'status': __BOOL__, 'result': __POSITION__, 'frame': __INT}`
 `__POSITION__ = [{'x': __FLOAT__, 'y': __FLOAT__}, {'x': __FLOAT__, 'y': __FLOAT__}, ...]`
 
@@ -51,6 +56,7 @@ Send an object where 'command' is 'boost'. This doubles your speed for 50 frames
 Returns True if successful, otherwise False. This costs 25 energy.
 
 Example: `{'command': 'boost'}`
+
 Returns: `{'status': __BOOL__, 'result': __BOOL__, 'frame': __INT__}`
 
 ## Firing your cannons
@@ -59,6 +65,7 @@ of 10 pixels/second, going in the same angle as you're headed. This costs 20 ene
 Returns True if successful, otherwise False.
 
 Example: `{'command': 'fire'}`
+
 Returns: `{'status': __BOOL__, 'result': __BOOL__, 'frame': __INT__}`
 
 ## Checking your energy
@@ -66,6 +73,7 @@ Send an object where 'command' is 'getEnergy'.
 Returns your ships energy. This costs 0 energy.
 
 Example: `{'command': 'getEnergy'}`
+
 Returns: `{'status': __BOOL__, 'result': __INT__, 'frame': __INT__}`
 
 ## Checking your health
@@ -73,6 +81,7 @@ Send an object where 'command' is 'getHealth'.
 Returns your ships health. This costs 0 energy.
 
 Example: `{'command': 'getHealth'}`
+
 Returns: `{'status': __BOOL__, 'result': __INT__, 'frame': __INT__}`
 
 ## Checking your location
@@ -80,6 +89,7 @@ Send an object where 'command' is 'getPosition'.
 Returns your ships position on the board. This costs 0 energy.
 
 Example: `{'command': 'getPosition'}`
+
 Returns: `{'status': __BOOL__, 'result': {'x': __FLOAT__, 'y': __FLOAT__}, 'frame': __INT__}`
 
 ## Getting your score
@@ -87,6 +97,7 @@ Send an object where 'command' is 'getScore'.
 Returns your ships score. This costs 0 energy.
 
 Example: `{'command': 'getScore'}`
+
 Returns: `{'status': __BOOL__, 'result': __INT__, 'frame': __INT__}`
 
 ## Checking the top-list
@@ -96,6 +107,7 @@ if the number of players is less than or equal to ten.
 This costs 0 energy.
 
 Example: `{'command': 'top10'}`
+
 Returns: `{'status': __BOOL__, 'result': __LIST__, 'frame': __INT__}`
 
 
